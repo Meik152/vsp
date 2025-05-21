@@ -29,6 +29,7 @@ private:
     bool handle_info(const string& args);
     bool handle_cd(const string& args);
     bool handle_read(const string& args);
+    bool handle_write(const string& args);
     bool handle_step(const string& args);
     bool handle_run(const string& args);
     bool handle_stop(const string& args);

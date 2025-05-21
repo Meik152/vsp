@@ -37,6 +37,8 @@ session::session(shared_ptr<vsp::session> s):
                      "d");
     register_handler(&session::handle_read, "read",
                      "reads the given <attribute>", "r");
+    register_handler(&session::handle_write, "write",
+                     "writes the given <attribute>", "w");
     register_handler(&session::handle_run, "run", "continues simulation", "c");
     register_handler(&session::handle_stop, "stop", "stops the simulation");
     register_handler(&session::handle_step, "step",
@@ -117,6 +119,31 @@ bool session::handle_read(const string& args) {
 
     cout << termcolors::BOLD << termcolors::WHITE << a->name()
          << termcolors::CLEAR << " " << a->get_str() << endl;
+    return true;
+}
+
+bool session::handle_write(const string& args) {
+    vector<string> split = mwr::split(args, ' ');
+    if (split.size() != 2) {
+        cout << termcolors::RED
+             << "two arguments expected: <attribute> <value>" << endl
+             << "Got " << split.size() << ": " << args << termcolors::CLEAR
+             << endl;
+        return true;
+    }
+
+    vsp::attribute* a = m_current_mod->find_attribute(split[0]);
+    if (!a) {
+        cout << "attribute '" << split[0] << "' does not exist!" << endl;
+        return true;
+    }
+
+    bool success = a->set(split[1]);
+
+    if (success)
+        cout << termcolors::GREEN << "Success" << termcolors::CLEAR << endl;
+    else
+        cout << termcolors::RED << "Failed" << termcolors::CLEAR << endl;
     return true;
 }
 
